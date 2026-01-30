@@ -1,14 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class MazeSelectionMenu extends JFrame {
-    
+/**
+ * 迷宫选择面板（由原 MazeSelectionMenu JFrame 重构为 JPanel）。
+ *
+ * 创建者：Kilo Code
+ * 创建日期：2026-01-28
+ */
+public class MazeSelectionMenu extends JPanel {
+
     private final int[][] MAZE_SIZES = {{5, 5}, {9, 9}, {4, 6}, {18, 8}};
     private final String[] MAZE_LABELS = {"Easy Square", "Medium Square", "Easy Rectangle", "Hard Rectangle"};
     private Cell[][][] mazes;
     private JPanel[] mazePanels;
 
-    public MazeSelectionMenu() {
+    private final MainApplication app;
+
+    public MazeSelectionMenu(MainApplication app) {
+        this.app = app;
         generateMazeOptions();
         setupUI();
     }
@@ -44,10 +53,8 @@ public class MazeSelectionMenu extends JFrame {
     }
     
     private void setupUI() {
-        setTitle("Choose Your Maze");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        
+
         JLabel titleLabel = new JLabel("Select a Maze to Play", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -72,9 +79,8 @@ public class MazeSelectionMenu extends JFrame {
         }
         add(mazesPanel, BorderLayout.CENTER);
         
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        revalidate();
+        repaint();
     }
     
     private void selectMaze(Cell[][] selectedMaze, int cols, int rows) {
@@ -82,13 +88,12 @@ public class MazeSelectionMenu extends JFrame {
         MazeGenerator.rows = rows;
         MazeGenerator.cols = cols;
         MazeGenerator.setMaze(selectedMaze);
-        try {
-            // Find solution, close menu, and start the game
-            MazeGenerator.findSolution();
-            dispose();
-            MouseTrap.startGameWithExistingMaze();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // Find solution, and start the game (switch panel in the same frame)
+        MazeGenerator.findSolution();
+
+        MouseTrap.startGameWithExistingMaze();
+        if (app != null) {
+            app.showGame();
         }
     }
     
@@ -140,3 +145,4 @@ public class MazeSelectionMenu extends JFrame {
         }
     }
 }
+

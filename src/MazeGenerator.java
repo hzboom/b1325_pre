@@ -1,9 +1,5 @@
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.List;
 
 public class MazeGenerator {
 

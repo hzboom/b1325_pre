@@ -1,6 +1,6 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,6 +26,16 @@ public class Graphics extends JPanel {
         int totalWidth = MazeGenerator.cols * gridSize + 2 * BORDER_SIDE;
         int totalHeight = MazeGenerator.rows * gridSize + BORDER_TOP + BORDER_BOTTOM;
         setPreferredSize(new Dimension(totalWidth + 30, totalHeight));
+    }
+    
+    public void updatePreferredSizeForMaze(int rows, int cols) {
+        // Update the grid size and recalculate dimensions for new maze
+        gridSize = MazeGenerator.GRID_SIZE;
+        int totalWidth = cols * gridSize + 2 * BORDER_SIDE;
+        int totalHeight = rows * gridSize + BORDER_TOP + BORDER_BOTTOM;
+        setPreferredSize(new Dimension(totalWidth + 30, totalHeight));
+        revalidate();
+        repaint();
     }
     
     public void paintMazeLabels(java.awt.Graphics g) {
@@ -109,7 +119,7 @@ public class Graphics extends JPanel {
             transform.translate(offsetX, offsetY);
             double scaleWidth = (double) mouseSize / mouseImage.getWidth();
             double scaleHeight = (double) mouseSize / mouseImage.getHeight();
-            if (MouseTrap.currentDirection == "left") {
+            if ("left".equals(MouseTrap.currentDirection)) {
                 transform.scale(scaleWidth, scaleHeight);
             } else {
                 // Flip horizontally/mirror for right-facing

@@ -1,5 +1,6 @@
-import java.awt.event.KeyEvent;
+import javax.swing.*;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class MouseTrap {
 
@@ -11,14 +12,29 @@ public class MouseTrap {
     static boolean hasWon = false;
     static boolean showSolution = false;
 
-    private static void showMazeSelectionMenu() throws InterruptedException {
-        new MazeSelectionMenu();
+    private static MainApplication app;
+
+    public static void setMainApplication(MainApplication newApp) {
+        app = newApp;
     }
 
-    public static void startGameWithExistingMaze() throws InterruptedException {
-        // Create new frame with the already selected maze and begin game
-        f = new Frame(MazeGenerator.rows, MazeGenerator.cols);
-        setupGameplay();
+    public static void showMazeSelectionMenu() {
+        if (app != null) {
+            app.showMazeSelection();
+        }
+    }
+
+    public static void startGameWithExistingMaze() {
+        if (app != null) {
+            app.showGame();
+        }
+        if (f != null) {
+            setupGameplay();
+        }
+    }
+
+    public static void setFrame(Frame frame) {
+        f = frame;
     }
 
     private static void setupGameplay() {
@@ -87,17 +103,19 @@ public class MouseTrap {
         f.graphics.repaint();
     }
 
-    public static void resetGame() throws InterruptedException {
-        // Show maze selection menu for new maze
-        f.dispose();
+    public static void resetGame() {
+        // Switch back to maze selection (do not dispose the main frame to avoid recording interruption)
+        if (f != null) {
+            f.removeKeyListener(listener);
+        }
+        isPlayable = false;
+        hasWon = false;
+        showSolution = false;
+
         showMazeSelectionMenu();
     }
 
     public static void main(String args[]) {
-        try {
-            showMazeSelectionMenu();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+        SwingUtilities.invokeLater(MainApplication::new);
     }
 }
